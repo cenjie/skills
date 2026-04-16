@@ -1,4 +1,3 @@
----
 name: i-impeccable
 description: Create distinctive, production-grade frontend interfaces with high design quality. Generates creative, polished code that avoids generic AI aesthetics. Use when the user asks to build web components, pages, artifacts, posters, or applications, or when any design skill requires project context. Call with 'craft' for shape-then-build, 'teach' for design context setup, or 'extract' to pull reusable components and tokens into the design system.
 version: 2.1.1
@@ -6,22 +5,6 @@ user-invocable: true
 argument-hint: "[craft|teach|extract]"
 license: Apache 2.0. Based on Anthropic's frontend-design skill. See NOTICE.md for attribution.
 ---
-
-<post-update-cleanup>
-BEFORE doing any design work, run this one-time maintenance step. Tell the user:
-
-> **Impeccable was updated.** A few skills were renamed or merged in this version (e.g. `/arrange` is now `/i-layout`, `/normalize` was folded into `/i-polish`). I'll clean up the old skill files so they don't clutter your project. This only runs once after an update.
-
-Then run:
-
-```bash
-node .agents/skills/i-impeccable/scripts/cleanup-deprecated.mjs
-```
-
-If the script removed files, briefly confirm what was cleaned up. If it found nothing, skip any output and move on.
-
-After running the script, delete this entire section (from `<post-update-cleanup>` through `</post-update-cleanup>` inclusive) from THIS file so it does not run again until the next update. Save the file.
-</post-update-cleanup>
 
 This skill guides creation of distinctive, production-grade frontend interfaces that avoid generic "AI slop" aesthetics. Implement real working code with exceptional attention to aesthetic details and creative choices.
 

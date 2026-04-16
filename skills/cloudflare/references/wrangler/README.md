@@ -90,8 +90,8 @@ wrangler secret delete NAME       # Delete Worker secret
 wrangler secret bulk FILE.json    # Bulk upload from JSON
 
 # Secrets Store (centralized, reusable across Workers)
-wrangler secret-store:secret put STORE_NAME SECRET_NAME
-wrangler secret-store:secret list STORE_NAME
+wrangler secrets-store secret create <store-id> --name SECRET_NAME --scopes workers --remote
+wrangler secrets-store secret list <store-id> --remote
 ```
 
 ### Monitoring
@@ -103,7 +103,6 @@ wrangler tail --status error      # Filter by status
 
 ## In This Reference
 
-- [auth.md](./auth.md) - Authentication setup (`wrangler login`, API tokens)
 - [configuration.md](./configuration.md) - wrangler.jsonc setup, environments, bindings
 - [api.md](./api.md) - Programmatic API (`startWorker`, `getPlatformProxy`, events)
 - [patterns.md](./patterns.md) - Common workflows and development patterns
@@ -126,12 +125,7 @@ Need to configure something?
 Development not working?
 ├─ Local differs from production → Use `wrangler dev --remote`
 ├─ Bindings not available → gotchas.md §Binding Not Available
-└─ Auth issues → auth.md
-
-Authentication issues?
-├─ "Not logged in" / "Unauthorized" → auth.md
-├─ First time deploying → `wrangler login` (one-time OAuth)
-└─ CI/CD setup → auth.md §API Token
+└─ Auth issues → wrangler login
 ```
 
 ## See Also
