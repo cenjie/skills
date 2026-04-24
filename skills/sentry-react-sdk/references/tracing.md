@@ -241,6 +241,9 @@ browserTracingIntegration({ enableInp: true })
 
 All React Router integrations live in `@sentry/react`. The core mechanism: **replace** `browserTracingIntegration()` with the router-specific variant. Both cannot be used simultaneously.
 
+> This section is for React Router non-framework/data/declarative usage.
+> If the project uses React Router Framework mode with `@sentry/react-router`, use `sentry-react-router-framework-sdk`.
+
 ---
 
 ### React Router v7 (Library Mode)
@@ -445,6 +448,24 @@ const router = sentryCreateBrowserRouter([
         errorElement: <SentryRouteErrorBoundary />,  // nested boundary
       },
     ],
+  },
+]);
+```
+
+**Simpler alternative — `sentryOnError`**
+
+For routes where you don't need custom error UI, use the exported `Sentry.sentryOnError` as the route's `onError` handler. It captures loader, action, and component errors directly without requiring a component:
+
+```typescript
+import * as Sentry from "@sentry/react";
+import { createBrowserRouter } from "react-router";
+
+const router = Sentry.wrapCreateBrowserRouterV7(createBrowserRouter)([
+  {
+    path: "/",
+    element: <RootLayout />,
+    onError: Sentry.sentryOnError,  // automatically captures route errors
+    children: [...],
   },
 ]);
 ```
@@ -693,6 +714,8 @@ This grouping is essential for meaningful performance data — without it, every
 
 ```
 Are you using React Router?
+├─ Framework mode (`@sentry/react-router`) ─► use sentry-react-router-framework-sdk
+│
 ├─ v7 (react-router package) ──────► reactRouterV7BrowserTracingIntegration
 │    ├─ createBrowserRouter? ──────► wrapCreateBrowserRouterV7(createBrowserRouter)
 │    ├─ createMemoryRouter? ───────► wrapCreateMemoryRouterV7(createMemoryRouter)
