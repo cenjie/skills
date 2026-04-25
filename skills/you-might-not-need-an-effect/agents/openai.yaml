@@ -1,5 +1,0 @@
-version: 1
-interface:
-  display_name: Avoid React Effects
-  short_description: Remove unnecessary useEffect usage and replace it with simpler React patterns.
-  default_prompt: Use this skill to review or refactor React code that may not need useEffect. Identify unnecessary effects, replace them with render-time derivation, event handlers, keys, memoization, or external-store subscriptions, and preserve behavior.
