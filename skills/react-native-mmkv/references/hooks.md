@@ -26,6 +26,8 @@ All hooks accept an optional second argument: a specific MMKV instance. If omitt
 | `useMMKVListener(callback, instance?)` | `void` | Fires callback on any key change |
 | `useMMKVKeys(instance?)` | `string[]` | Reactive list of all keys |
 
+All value-hook setters also accept a **functional update** (like `useState`): `setValue(prev => ...)`.
+
 ## Recipes
 
 ### Basic typed hooks
@@ -41,6 +43,18 @@ function App() {
 }
 ```
 
+### Functional updates
+
+Setters accept a function of the previous value, just like `useState`:
+
+```tsx
+const [age, setAge] = useMMKVNumber('user.age')
+
+const onBirthday = useCallback(() => {
+  setAge((prev) => (prev ?? 0) + 1)
+}, [setAge])
+```
+
 ### Clearing a key
 
 Pass `undefined` to the setter to remove the key:
@@ -50,7 +64,7 @@ const [username, setUsername] = useMMKVString('user.name')
 
 const onLogout = useCallback(() => {
   setUsername(undefined) // removes 'user.name' from storage
-}, [])
+}, [setUsername])
 ```
 
 ### Typed objects
@@ -132,7 +146,7 @@ function App() {
 
 - **Setter with `undefined` deletes the key.** This is intentional — it maps to `storage.remove(key)`.
 - **Hooks re-render on every change to that key.** If you write to a key very frequently (e.g. every frame), the component will re-render on every write. Consider throttling or using `storage.set()` directly instead of the hook setter.
-- **`useMMKVObject` parses on every render.** If the stored JSON is large, this can be noticeable. Consider caching parsed objects in state if performance matters.
+- **`useMMKVObject` re-parses when the stored value changes.** Parsing is memoized on the underlying JSON string, so it does not re-parse on every render — but every write to that key triggers a `JSON.parse`. For large objects written frequently, this can cause noticeable performance issue.
 - **`useMMKV()` without arguments returns the default instance.** Pass `{ id: '...' }` to get a specific one.
 
 ## Pointers

@@ -14,8 +14,8 @@ react-native-mmkv V4 is a complete rewrite using Nitro Modules (instead of raw J
 ## Requirements
 
 - **React Native 0.75.0 or higher**
-- **New Architecture / TurboModules enabled**
 - `react-native-nitro-modules` as a peer dependency
+- Works on **both** the New Architecture and the old architecture (Nitro is backwards compatible)
 
 ## Breaking changes
 
@@ -55,7 +55,21 @@ storage.delete('user.name')
 storage.remove('user.name')
 ```
 
-### 4. `AppGroup` → `AppGroupIdentifier`
+### 4. `Mode` enum → string literals
+
+The `Mode` enum import no longer exists. Use string literals instead:
+
+```ts
+// BEFORE (V3)
+import { MMKV, Mode } from 'react-native-mmkv'
+const storage = new MMKV({ id: 'shared', mode: Mode.MULTI_PROCESS })
+
+// AFTER (V4)
+import { createMMKV } from 'react-native-mmkv'
+const storage = createMMKV({ id: 'shared', mode: 'multi-process' })
+```
+
+### 5. `AppGroup` → `AppGroupIdentifier`
 
 In your `Info.plist`, the key for iOS App Group sharing was renamed:
 
@@ -93,6 +107,7 @@ The latest V4 should include a compatible MMKVCore by default.
 - **Data is preserved.** V4 reads the same MMKV files as V3. No data migration needed — only API changes.
 - **Hooks API is unchanged.** `useMMKVString`, `useMMKVNumber`, etc. work the same way.
 - **The `MMKV` type still exists** as the TypeScript interface for the instance. You just can't `new` it anymore.
+- **Two V3 APIs are now deprecated** (still work, but should be replaced): `storage.size` → `storage.byteSize`, and `storage.recrypt(key)` → `storage.encrypt(key)` / `storage.decrypt()`.
 
 ## Pointers
 
