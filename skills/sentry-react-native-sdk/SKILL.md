@@ -633,6 +633,7 @@ Sentry.init({
 | Option | Type | Purpose |
 |--------|------|---------|
 | `enableLogs` | `boolean` | Enable `Sentry.logger.*` API |
+| `enableAutoConsoleLogs` | `boolean` | Auto-capture `console.*` calls when `enableLogs: true`. Set `false` to use only manual `Sentry.logger.*` (SDK ≥8.14.0, default: `true`) |
 | `beforeSendLog` | `function` | Filter/modify logs before sending |
 | `logsOrigin` | `'native' \| 'js' \| 'all'` | Filter log source (SDK ≥7.7.0) |
 
@@ -716,6 +717,7 @@ These integrations are enabled automatically — no config needed:
 | `Screenshot` | Captures screenshot on error (when `attachScreenshot: true`) |
 | `ViewHierarchy` | Attaches view hierarchy (when `attachViewHierarchy: true`) |
 | `NativeLinkedErrors` | Links JS errors to their native crash counterparts |
+| `TurboModuleContext` | Tracks TurboModule calls in crash-time context; attributes native crashes to the high-level RN module + method (e.g., `RNSentry.captureEnvelope`) |
 
 ### Opt-In Integrations
 
@@ -726,6 +728,34 @@ These integrations are enabled automatically — no config needed:
 | `reactNativeNavigationIntegration()` | Add to `integrations` array (Wix only) |
 | `feedbackIntegration()` | Add to `integrations` array (user feedback widget; supports `enableShakeToReport` for native shake detection) |
 | `deeplinkIntegration()` | Add to `integrations` array (auto-captures deep link URLs as breadcrumbs; opt-in) |
+| `turboModuleContextIntegration()` | **Default** — tracks `RNSentry` TurboModule automatically. Optionally configure with `{ modules: [...] }` to track custom TurboModules |
+
+### Tracking Custom TurboModules
+
+The `TurboModuleContext` integration is enabled by default and automatically tracks the built-in `RNSentry` TurboModule. To track your own custom TurboModules, configure the integration explicitly:
+
+```typescript
+import * as Sentry from "@sentry/react-native";
+import { NativeModules } from "react-native";
+
+Sentry.init({
+  dsn: "YOUR_DSN",
+  integrations: [
+    Sentry.turboModuleContextIntegration({
+      modules: [
+        {
+          name: "MyCustomModule",
+          module: NativeModules.MyCustomModule,
+          // Optional: skip specific methods to avoid tracking overhead
+          skipMethods: ["addListener", "removeListeners"],
+        },
+      ],
+    }),
+  ],
+});
+```
+
+When a native crash occurs inside a tracked TurboModule method call, the crash report will include `contexts.turbo_module` with the module name and method, making it easier to identify the exact RN API call that triggered the crash.
 
 ### Rage Tap Detection (TouchEventBoundary)
 
