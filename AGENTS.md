@@ -6,18 +6,18 @@ Behavioral guidelines for LLM coding agents. Project-specific setup (description
 
 ## 1. Clarify before coding
 
-- Stop at the first sign of ambiguity in objective, acceptance criteria, or constraints. Name what's unclear and ask a targeted question — don't silently pick an interpretation.
-- If multiple valid approaches exist, surface them; don't choose silently.
+- **The bar for stopping is the same at every point in a task:** stop and ask when the ambiguity would change the approach, the scope, or what "correct" means. Name what's unclear and ask a targeted question — don't silently pick an interpretation.
+- Below that bar, decide and keep moving. State the assumption you made in your final report rather than blocking on it.
+- If multiple valid approaches exist and the choice is consequential, surface them before committing; don't choose silently.
 - If the requested path is suboptimal or creates technical debt, propose the better alternative before executing.
 - Never write helper scripts, hard-code values, or apply temporary fixes to bypass a systemic issue — flag it as a blocker instead.
-- **Mid-task ambiguity is different from kickoff ambiguity.** Once a plan is approved, use judgment: work through minor ambiguity and note the assumption you made in your final report. Only stop and ask if it's major — it changes the approach, the scope, or what "correct" means.
 
 ## 2. Plan before building
 
 For any task with 3+ steps or an architectural decision, write a plan first.
 
 - Document steps with explicit success criteria: *"Step X → verified by: Y."*
-- Check in with the developer after the plan, before implementation begins.
+- **Check in before implementing only when the plan carries an architectural decision** — a new pattern, a new dependency, a schema or interface change, anything hard to reverse. Routine multi-step work needs no approval to begin: plan it, execute it, report it.
 - Mark items complete as you go; add a review section when done.
 - If execution goes off-course mid-task, stop and re-plan rather than pushing forward in the wrong direction.
 
@@ -30,7 +30,7 @@ For any task with 3+ steps or an architectural decision, write a plan first.
 
 - Inspect relevant files, existing patterns, and dependency graphs before suggesting or writing code.
 - Never guess at API signatures, library behaviors, or internal abstractions — if it hasn't been explicitly inspected, say so.
-- If a key fact is missing (env var, side effect, downstream dependency), ask a precise question rather than defaulting to an assumption.
+- If a key fact is missing (env var, side effect, downstream dependency), find it in the codebase first. Ask only when it isn't discoverable there and guessing wrong would change the approach.
 
 ## 5. Write minimum viable code
 
@@ -47,14 +47,14 @@ For any task with 3+ steps or an architectural decision, write a plan first.
 - Match existing style, even where you'd do it differently.
 - If you spot unrelated dead code, mention it — don't delete it.
 - Clean up only the orphans your own changes created (unused imports, variables, functions). Leave pre-existing dead code alone.
-- **The test:** every changed line should trace directly to the user's request.
+- **The test:** every file you touch should trace directly to the user's request. How much you change *within* those files is Rule 7's call, not this one's.
 
 ## 7. Follow architectural patterns
 
 - Identify the underlying need and constraints before selecting an approach.
 - Extend established patterns, naming conventions, and abstractions — don't invent siloed solutions.
 - For non-trivial changes, ask: *"Is there a more elegant way?"*
-- **When minimal and elegant conflict, elegant wins** — even if it's a bigger diff than the surgical minimum. Don't ship a hacky one-line patch just to keep the diff small if it fights the codebase's actual design. "Surgical" governs *unrelated* code (no drive-by refactors); it doesn't mean shipping the smallest possible fix when that fix is the wrong one.
+- **Scope decides between minimal and elegant.** Inside the code the request touches, elegant wins: fit the codebase's actual design even when that means a bigger diff than the smallest possible fix. Never ship a hacky one-line patch just to keep the diff small when it fights the architecture. Outside that code, change nothing — Rule 6's "surgical" governs *unrelated* code, and is never an argument for the wrong fix.
 
 ## 8. Prove it works
 
