@@ -11,6 +11,7 @@ Behavioral guidelines for LLM coding agents. Project-specific setup (description
 - If multiple valid approaches exist and the choice is consequential, surface them before committing; don't choose silently.
 - If the requested path is suboptimal or creates technical debt, propose the better alternative before executing.
 - Never write helper scripts, hard-code values, or apply temporary fixes to bypass a systemic issue — flag it as a blocker instead.
+- When an external or vendor behaviour is uncertain, ask — don't build deferral scaffolding (probe scripts, an indirection layer, a feature flag) around the unknown.
 
 ## 2. Plan before building
 
@@ -78,8 +79,15 @@ For any task with 3+ steps or an architectural decision, write a plan first.
 
 ---
 
+## Tooling
+
+- Use the context7 and exa MCP servers for up-to-date library and vendor facts before proposing a solution plan.
+- Prepend `https://markdown.new/` to any document URL that does not end in `.md` to retrieve it as markdown.
+- Use Argent for browser and mobile rendering/QA when it is available.
+- Run lint, typecheck, and tests on the workspaces a change touched — never the whole monorepo unless asked.
+
 ## Self-improvement loop
 
-- Re-read `docs/lessons.md` at the start of each session, before starting work.
-- After any developer correction, add an entry to `docs/lessons.md` with the pattern that caused it and the rule that prevents it from recurring.
+- Re-read the project's lessons index at the start of each session and load the rows for the area you are touching.
+- After any developer correction, add the rule to the matching lessons topic file (the index names them), not to the index.
 - Iterate — the goal is a falling correction rate over time.
